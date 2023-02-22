@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private bool isWallSliding;
     public float wallSlideSpeed;
     public float movementForceInAir;
+    public bool isTouchingLedge;
 
     public float airDragMultiplier = 0.95f;
     public float variableJumpHeightMultiplier = 0.5f;
@@ -32,11 +33,28 @@ public class PlayerController : MonoBehaviour
 
     public Transform groundCheck;
     public Transform wallCheck;
+    public Transform ledgeCheck;
 
     public Vector2 wallHopDirection;
     public Vector2 wallJumpDirection;
     public float wallHopForce;
     public float wallJumpForce;
+
+    private bool canClimbLedge = false;
+    private bool ledgeDetected;
+
+    private Vector2 ledgePosBot;
+    private Vector2 ledgePos1;
+    private Vector2 ledgePos2;
+
+    private bool canMove;
+    private bool canFlip;
+
+    public float ledgeClimbXOffset1 = 0f;
+    public float ledgeClimbYOffset1 = 0f;
+    public float ledgeClimbXOffset2 = 0f;
+    public float ledgeClimbYOffset2 = 0f;
+
 
     private void Start()
     {
@@ -52,6 +70,7 @@ public class PlayerController : MonoBehaviour
         CheckMovementDirection();
         CheckIfCanJump();
         CheckIfWallSliding();
+        CheckLedgeClimb();
     }
 
     private void FixedUpdate()
@@ -62,7 +81,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckIfWallSliding()
     {
-        if (isTouchingWall && !isGrounded && rb.velocity.y < 0)
+        if (isTouchingWall && !isGrounded && rb.velocity.y < 0 && !canClimbLedge)
         {
             isWallSliding = true;
         }
@@ -72,11 +91,53 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void CheckLedgeClimb()
+    {
+        if (ledgeDetected && !canClimbLedge)
+        {
+            canClimbLedge = true;
+
+            if (isFacingRight)
+            {
+                ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+            }
+            else
+            {
+                ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+            }
+
+            canMove = false;
+            canFlip = false;
+        }
+
+        if (canClimbLedge)
+        {
+            transform.position = ledgePos1;
+        }
+    }
+
+    public void FinishLedgeClimb()
+    {
+        canClimbLedge = false;
+        transform.position = ledgePos2;
+        canMove = true;
+        canFlip = true;
+        ledgeDetected = false;
+    }
+
     private void CheckSurroundings()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
 
         isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, whatIsGround);
+        isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, whatIsGround);
+
+        if (isTouchingWall && !isTouchingLedge && !ledgeDetected)
+        {
+            ledgeDetected = true;
+        }
     }
 
     private void CheckIfCanJump()
