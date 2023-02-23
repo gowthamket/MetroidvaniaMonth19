@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     public float wallSlideSpeed;
     public float movementForceInAir;
     public bool isTouchingLedge;
+    public bool isDashing;
 
     public float airDragMultiplier = 0.95f;
     public float variableJumpHeightMultiplier = 0.5f;
@@ -54,6 +55,15 @@ public class PlayerController : MonoBehaviour
     public float ledgeClimbYOffset1 = 0f;
     public float ledgeClimbXOffset2 = 0f;
     public float ledgeClimbYOffset2 = 0f;
+
+    public float dashTime;
+    public float dashTimeLeft;
+    public float distanceBetweenImages;
+    public float dashCooldown;
+    public float dashSpeed;
+    public float lastImageXpos;
+
+    private float lastDash;
 
 
     private void Start()
@@ -180,6 +190,42 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonUp("Jump"))
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * variableJumpHeightMultiplier);
+        }
+
+        if (Input.GetButtonDown("Dash"))
+        {
+            AttemptToDash();
+        }
+    }
+
+    private void AttemptToDash()
+    {
+        isDashing = true;
+        dashTimeLeft = dashTime;
+        lastDash = Time.time;
+
+        PlayerAfterImagePool.Instance.GetFromPool();
+    }
+
+    private void CheckDash()
+    {
+        if (isDashing)
+        {
+            canMove = false;
+            canFlip = false;
+            rb.velocity = new Vector2(dashSpeed * facingDirection, rb.velocity.y);
+            dashTimeLeft -= Time.deltaTime;
+
+            if (Mathf.Abs(transform.position.x - lastImageXpos) > distanceBetweenImages)
+            {
+                PlayerAfterImagePool.Instance.GetFromPool();
+                lastImageXpos = transform.position.x;
+            }
+        }
+
+        if (dashTimeLeft <= 0 || isTouchingWall)
+        {
+            isDashing = false;
         }
     }
 
