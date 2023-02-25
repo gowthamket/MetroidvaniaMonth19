@@ -28,12 +28,19 @@ public class BasicEnemyController : MonoBehaviour
     private LayerMask whatIsGround;
     [SerializeField]
     private Vector2 knockBackSpeed;
+    [SerializeField]
+    private GameObject
+        hitParticle,
+        deathChunkParticle,
+        deathBloodParticle;
 
     private float
         currentHealth,
         knockBackStartTime;
 
-    private int facingDirection;
+    private int
+        facingDirection,
+        damageDirection;
 
     private Vector2 movement;
 
@@ -94,12 +101,17 @@ public class BasicEnemyController : MonoBehaviour
 
     private void EnterKnockbackState()
     {
-
+        knockBackStartTime = Time.time;
+        movement.Set(knockBackSpeed.x * damageDirection, knockBackSpeed.y);
+        aliveRb.velocity = movement;
     }
 
     private void UpdateKnockbackState()
     {
-
+        if (Time.time >= knockBackStartTime + knockbackDuration)
+        {
+            SwitchState(State.Walking);
+        }
     }
 
     private void ExitKnockbackState()
@@ -109,7 +121,9 @@ public class BasicEnemyController : MonoBehaviour
 
     private void EnterDeadState()
     {
-
+        Instantiate(deathChunkParticle, alive.transform.position, deathChunkParticle.transform.rotation);
+        Instantiate(deathBloodParticle, alive.transform.position, deathBloodParticle.transform.rotation);
+        Destroy(gameObject);
     }
 
     private void UpdateDeadState()
@@ -125,6 +139,26 @@ public class BasicEnemyController : MonoBehaviour
     private void Damage(float[] attackDetails)
     {
         currentHealth -= attackDetails[0];
+
+        Instantiate(hitParticle, alive.transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360f)));
+
+        if (attackDetails[1] > alive.transform.position.x)
+        {
+            damageDirection = -1;
+        }
+        else
+        {
+            damageDirection = 1;
+        }
+
+        if (currentHealth > 0.0f)
+        {
+            SwitchState(State.Knockback);
+        }
+        else if (currentHealth <= 0.0f)
+        {
+            SwitchState(State.Dead);
+        }
     }
 
     private void Flip()
@@ -162,5 +196,11 @@ public class BasicEnemyController : MonoBehaviour
         }
 
         currentState = state;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(groundCheck.position, new Vector2(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
+        Gizmos.DrawLine(wallCheck.position, new Vector2(wallCheck.position.x, wallCheck.position.y));
     }
 }
