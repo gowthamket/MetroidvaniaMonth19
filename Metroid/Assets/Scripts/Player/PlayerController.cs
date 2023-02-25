@@ -88,6 +88,8 @@ public class PlayerController : MonoBehaviour
         CheckIfCanJump();
         CheckIfWallSliding();
         CheckLedgeClimb();
+        CheckDash();
+        CheckKnockback();
     }
 
     private void FixedUpdate()
@@ -117,7 +119,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckKnockback()
     {
-        if (Time.time >= knockbackStartTime + knockbackDuration)
+        if (Time.time >= knockbackStartTime + knockbackDuration && knockback)
         {
             knockback = false;
             rb.velocity = new Vector2(0.0f, rb.velocity.y);

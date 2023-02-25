@@ -22,6 +22,7 @@ public class PlayerCombatController : MonoBehaviour
     private Animator anim;
 
     private PlayerController PC;
+    private PlayerStats PS;
 
     private void Start()
     {
@@ -85,6 +86,8 @@ public class PlayerCombatController : MonoBehaviour
         if (!PC.GetDashStatus())
         {
             int direction;
+
+            PS.DecreaseHealth(attackDetails[0]);
 
             if (attackDetails[1] < transform.position.x)
             {
