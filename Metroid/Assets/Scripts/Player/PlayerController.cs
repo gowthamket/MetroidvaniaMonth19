@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
 {
     private float movementInputDirection;
     private Rigidbody2D rb;
+    [SerializeField]
+    private float knockbackDuration;
+    private float knockbackStartTime;
 
     private int amountOfJumpsLeft;
     private int facingDirection = 1;
@@ -26,6 +29,10 @@ public class PlayerController : MonoBehaviour
     public float movementForceInAir;
     public bool isTouchingLedge;
     public bool isDashing;
+    private bool knockback;
+
+    [SerializeField]
+    private Vector2 knockbackSpeed;
 
     public float airDragMultiplier = 0.95f;
     public float variableJumpHeightMultiplier = 0.5f;
@@ -98,6 +105,22 @@ public class PlayerController : MonoBehaviour
         else
         {
             isWallSliding = false;
+        }
+    }
+
+    private void Knockback(int direction)
+    {
+        knockback = true;
+        knockbackStartTime = Time.time;
+        rb.velocity = new Vector2(knockbackSpeed.x * direction, knockbackSpeed.y);
+    }
+
+    private void CheckKnockback()
+    {
+        if (Time.time >= knockbackStartTime + knockbackDuration)
+        {
+            knockback = false;
+            rb.velocity = new Vector2(0.0f, rb.velocity.y);
         }
     }
 
@@ -250,6 +273,18 @@ public class PlayerController : MonoBehaviour
             Vector2 forceToAdd = new Vector2(wallJumpForce * wallJumpDirection.x * -facingDirection, wallJumpForce * wallJumpDirection.y);
             rb.AddForce(forceToAdd, ForceMode2D.Impulse);
         }
+    }
+
+    public bool GetDashStatus()
+    {
+        return isDashing;
+    }
+
+    public void KnockBack(int direction)
+    {
+        knockback = true;
+        knockbackStartTime = Time.time;
+        rb.velocity = new Vector2(knockbackSpeed.x * movementInputDirection, knockbackSpeed.y);
     }
 
     private void ApplyMovement()

@@ -19,13 +19,21 @@ public class BasicEnemyController : MonoBehaviour
         wallCheckDistance,
         movementSpeed,
         maxHealth,
-        knockbackDuration;
+        knockbackDuration,
+        lastTouchDamageTime,
+        touchDamageCooldown,
+        touchDamage,
+        touchDamageHeight,
+        touchDamageWidth;
     [SerializeField]
     private Transform
         groundCheck,
-        wallCheck;
+        wallCheck,
+        touchDamageCheck;
     [SerializeField]
-    private LayerMask whatIsGround;
+    private LayerMask 
+        whatIsPlayer,
+        whatIsGround;
     [SerializeField]
     private Vector2 knockBackSpeed;
     [SerializeField]
@@ -38,11 +46,16 @@ public class BasicEnemyController : MonoBehaviour
         currentHealth,
         knockBackStartTime;
 
+    private float[] attackDetails = new float[2];
+
     private int
         facingDirection,
         damageDirection;
 
-    private Vector2 movement;
+    private Vector2 
+        touchDamageBotLeft,
+        touchDamageTopRight,
+        movement;
 
     private bool
         groundDetected,
@@ -55,6 +68,9 @@ public class BasicEnemyController : MonoBehaviour
     {
         alive = transform.Find("Alive").gameObject;
         aliveRb = alive.GetComponent<Rigidbody2D>();
+
+        currentHealth = maxHealth;
+        facingDirection = 1;
     }
 
     private void Update()
@@ -62,7 +78,7 @@ public class BasicEnemyController : MonoBehaviour
         switch (currentState)
         {
             case State.Walking:
-                UpdateWalkingState();
+                UpdateMovingState();
                 break;
             case State.Knockback:
                 UpdateKnockbackState();
@@ -73,15 +89,17 @@ public class BasicEnemyController : MonoBehaviour
         }
     }
 
-    private void EnterWalkingState()
+    private void EnterMovingState()
     {
 
     }
 
-    private void UpdateWalkingState()
+    private void UpdateMovingState()
     {
         groundDetected = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
         wallDetected = Physics2D.Raycast(wallCheck.position, Vector2.down, wallCheckDistance, whatIsGround);
+
+        CheckTouchDamage();
 
         if (!groundDetected || wallDetected)
         {
@@ -94,7 +112,7 @@ public class BasicEnemyController : MonoBehaviour
         }
     }
 
-    private void ExitWalkingState()
+    private void ExitMovingState()
     {
 
     }
@@ -161,6 +179,25 @@ public class BasicEnemyController : MonoBehaviour
         }
     }
 
+    private void CheckTouchDamage()
+    {
+        if (Time.time >= lastTouchDamageTime + touchDamageCooldown)
+        {
+            touchDamageBotLeft.Set(touchDamageCheck.position.x - (touchDamageWidth / 2), touchDamageCheck.position.y - (touchDamageHeight / 2));
+            touchDamageTopRight.Set(touchDamageCheck.position.x + (touchDamageWidth / 2), touchDamageCheck.position.y + (touchDamageHeight / 2));
+
+            Collider2D hit = Physics2D.OverlapArea(touchDamageBotLeft, touchDamageTopRight, whatIsPlayer);
+
+            if (hit != null)
+            {
+                lastTouchDamageTime = Time.time;
+                attackDetails[0] = touchDamage;
+                attackDetails[1] = alive.transform.position.x;
+                hit.SendMessage("Damage", attackDetails);
+            }
+        }
+    }
+
     private void Flip()
     {
         facingDirection *= -1;
@@ -172,7 +209,7 @@ public class BasicEnemyController : MonoBehaviour
         switch (currentState)
         {
             case State.Walking:
-                ExitWalkingState();
+                ExitMovingState();
                 break;
             case State.Knockback:
                 ExitKnockbackState();
@@ -185,7 +222,7 @@ public class BasicEnemyController : MonoBehaviour
         switch (state)
         {
             case State.Walking:
-                EnterWalkingState();
+                EnterMovingState();
                 break;
             case State.Knockback:
                 EnterKnockbackState();

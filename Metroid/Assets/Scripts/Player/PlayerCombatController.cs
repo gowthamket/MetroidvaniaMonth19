@@ -21,6 +21,8 @@ public class PlayerCombatController : MonoBehaviour
 
     private Animator anim;
 
+    private PlayerController PC;
+
     private void Start()
     {
         anim = GetComponent<Animator>();
@@ -75,6 +77,25 @@ public class PlayerCombatController : MonoBehaviour
         foreach (Collider2D collider in detectedObjects)
         {
             collider.transform.parent.SendMessage("Damage", attack1Damage);
+        }
+    }
+
+    private void Damage(float[] attackDetails)
+    {
+        if (!PC.GetDashStatus())
+        {
+            int direction;
+
+            if (attackDetails[1] < transform.position.x)
+            {
+                direction = 1;
+            }
+            else
+            {
+                direction = -1;
+            }
+
+            PC.KnockBack(direction);
         }
     }
 
