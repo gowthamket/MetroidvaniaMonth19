@@ -5,6 +5,9 @@ using UnityEngine;
 public class MoveState : State
 {
     protected D_MoveState stateData;
+
+    protected bool isDetectingWall;
+    protected bool isDetectingLedge;
     public MoveState(Entity entity, FiniteStateMachine stateMachine, string animBoolName, D_MoveState stateData) : base(entity, stateMachine, animBoolName)
     {
         this.stateData = stateData;
@@ -13,6 +16,10 @@ public class MoveState : State
     public virtual void Enter()
     {
         base.Enter();
+        entity.SetVelocity(stateData.movementSpeed);
+
+        isDetectingLedge = entity.CheckLedge();
+        isDetectingWall = entity.CheckWall();
     }
 
     public virtual void Exit()
@@ -29,4 +36,6 @@ public class MoveState : State
     {
         base.PhysicsUpdate();   
     }
+
+    
 }
