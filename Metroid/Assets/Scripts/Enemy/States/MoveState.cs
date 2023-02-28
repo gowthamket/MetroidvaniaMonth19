@@ -19,10 +19,6 @@ public class MoveState : State
     {
         base.Enter();
         entity.SetVelocity(stateData.movementSpeed);
-
-        isDetectingLedge = entity.CheckLedge();
-        isDetectingWall = entity.CheckWall();
-        isPlayerInMinAggroRange = entity.CheckPlayerInMinAggroRange();
     }
 
     public virtual void Exit()
@@ -41,7 +37,15 @@ public class MoveState : State
 
         isDetectingLedge = entity.CheckLedge();
         isDetectingWall = entity.CheckWall();
+        isPlayerInMinAggroRange = entity.CheckPlayerInMinAggroRange();
     }
 
-    
+    public override void DoChecks()
+    {
+        base.DoChecks();
+
+        isDetectingLedge = entity.CheckLedge();
+        isDetectingWall = entity.CheckWall();
+        isPlayerInMinAggroRange = entity.CheckPlayerInMinAggroRange();
+    }
 }
