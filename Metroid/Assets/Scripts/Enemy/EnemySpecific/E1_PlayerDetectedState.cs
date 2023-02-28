@@ -25,6 +25,10 @@ public class E1_PlayerDetectedState : PlayerDetectedState
     {
         base.LogicUpdate();
 
+        if (performCloseRangeAction)
+        {
+            stateMachine.ChangeState(enemy.meleeAttackState);
+        }
         if (performLongRangeAction)
         {
             enemy.idleState.SetFlipAfterIdle(false);

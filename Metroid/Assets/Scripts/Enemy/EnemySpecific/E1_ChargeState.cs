@@ -37,6 +37,10 @@ public class E1_ChargeState : ChargeState
 
         else if (isChargeTimeOver)
         {
+            if (performCloseRangeAction)
+            {
+                stateMachine.ChangeState(enemy.meleeAttackState);
+            }
             if (isPlayerInMinAggroRange)
             {
                 stateMachine.ChangeState(enemy.playerDetectedState);
