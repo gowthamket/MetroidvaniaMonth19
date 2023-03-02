@@ -7,6 +7,7 @@ public class PlayerGroundedState : PlayerState
     protected int xInput;
 
     private bool jumpInput;
+    private bool isGrounded;
 
     public PlayerGroundedState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {
@@ -22,6 +23,7 @@ public class PlayerGroundedState : PlayerState
     {
         base.Enter();
     }
+        
 
     public override void Exit()
     {
@@ -35,9 +37,15 @@ public class PlayerGroundedState : PlayerState
         xInput = player.inputHandler.NormInputX;
         jumpInput = player.inputHandler.jumpInput;
 
-        if (jumpInput)
+        if (jumpInput && player.jumpState.CanJump())
         {
+            player.inputHandler.UseJumpInput();
             stateMachine.ChangeState(player.jumpState);
+        }
+        else if (!isGrounded)
+        {
+            player.jumpState.DecreaseAmountOfJumpsLeft();
+            stateMachine.ChangeState(player.inAirState);
         }
     }
 
