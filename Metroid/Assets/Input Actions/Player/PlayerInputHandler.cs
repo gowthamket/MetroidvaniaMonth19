@@ -9,6 +9,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     public int NormInputX { get; private set; } 
     public int NormInputY { get; private set; }
+    public bool jumpInput { get; private set; } 
 
     public void OnMoveInput(InputAction.CallbackContext context)
     {
@@ -22,7 +23,12 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (context.started)
         {
-
+            jumpInput = true;
         }
+    }
+
+    public void UseJumpInput()
+    {
+        jumpInput = false;
     }
 }

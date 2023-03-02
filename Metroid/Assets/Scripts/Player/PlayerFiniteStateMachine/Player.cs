@@ -8,6 +8,9 @@ public class Player : MonoBehaviour
 
     public PlayerIdleState idleState { get; private set; }
     public PlayerMoveState moveState { get; private set; }
+    public PlayerJumpState jumpState { get; private set; }
+    public PlayerInAirState inAirState { get; private set; }
+    public PlayerLandState landState { get; private set; }  
 
     public Animator anim { get; private set; } 
     public PlayerInputHandler inputHandler { get; private set; }    
@@ -22,12 +25,18 @@ public class Player : MonoBehaviour
 
     private Vector2 workspace;
 
+    [SerializeField]
+    private Transform groundCheck;
+
     private void Awake()
     {
         StateMachine = new PlayerStateMachine();
 
         idleState = new PlayerIdleState(this, StateMachine, playerData, "idle");
         moveState = new PlayerMoveState(this, StateMachine, playerData, "move");
+        jumpState = new PlayerJumpState(this, StateMachine, playerData, "in air");
+        inAirState = new PlayerInAirState(this, StateMachine, playerData, "in air");
+        landState = new PlayerLandState(this, StateMachine, playerData, "land");
     }
 
     private void Start()
@@ -54,6 +63,18 @@ public class Player : MonoBehaviour
         workspace.Set(velocity, currentVelocity.y);
         rb.velocity = workspace;
         currentVelocity = workspace;
+    }
+
+    public void SetVelocityY(float velocity)
+    {
+        workspace.Set(currentVelocity.x, velocity);
+        rb.velocity = workspace;
+        currentVelocity = workspace;
+    }
+
+    public bool CheckIfTouchingGround()
+    {
+        return Physics2D.OverlapCircle(groundCheck.position, playerData.groundCheckRadius, playerData.whatIsGround);
     }
 
     public void CheckIfShouldFlip(int xInput)
