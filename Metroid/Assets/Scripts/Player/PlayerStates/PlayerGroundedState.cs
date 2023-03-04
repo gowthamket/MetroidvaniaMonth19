@@ -43,6 +43,15 @@ public class PlayerGroundedState : PlayerState
         jumpInput = player.inputHandler.jumpInput;
         grabInput = player.inputHandler.grabInput;  
 
+        if (player.inputHandler.attackInputs[(int)(CombatInputs.primary)])
+        {
+            stateMachine.ChangeState(player.primaryAttackState);
+        }
+        else if (player.inputHandler.attackInputs[(int)(CombatInputs.secondary)])
+        {
+            stateMachine.ChangeState(player.secondaryAttackState);
+        }
+
         if (jumpInput && player.jumpState.CanJump())
         {
             player.inputHandler.UseJumpInput();

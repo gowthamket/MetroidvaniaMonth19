@@ -14,6 +14,9 @@ public class Player : MonoBehaviour
     public PlayerWallClimbState wallClimbState { get; private set; }
     public PlayerWallGrabState wallGrabState { get; private set; }
     public PlayerWallSlideState wallSlideState { get; private set; }    
+    public PlayerAttackState primaryAttackState { get; private set; }
+    public PlayerAttackState secondaryAttackState { get; private set; } 
+    public PlayerInventory inventory { get; private set; }
 
     public Animator anim { get; private set; } 
     public PlayerInputHandler inputHandler { get; private set; }    
@@ -33,6 +36,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Transform wallCheck;
 
+   
     private void Awake()
     {
         StateMachine = new PlayerStateMachine();
@@ -45,12 +49,16 @@ public class Player : MonoBehaviour
         wallClimbState = new PlayerWallClimbState(this, StateMachine, playerData, "wall climb");
         wallGrabState = new PlayerWallGrabState(this, StateMachine, playerData, "wall grab");
         wallSlideState = new PlayerWallSlideState(this, StateMachine, playerData, "wall state");
+        primaryAttackState = new PlayerAttackState(this, StateMachine, playerData, "primary attack");
+        secondaryAttackState = new PlayerAttackState(this, StateMachine, playerData, "secondary attack");
+        inventory = GetComponent<PlayerInventory>();
     }
 
     private void Start()
     {
         anim = GetComponent<Animator>();
         inputHandler = GetComponent<PlayerInputHandler>();
+        
 
         StateMachine.Initialize(idleState);
     }

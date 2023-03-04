@@ -213,6 +213,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 52eb5a62-7bad-42c8-9919-daf06113d5b2
     m_ActionName: Gameplay/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c702248a-4f83-4c98-90a0-19d836a5e08f
+    m_ActionName: Gameplay/Grab[/Keyboard/ctrl]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard
   m_DefaultActionMap: Gameplay
@@ -230,6 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c28a2f444ac462242968acc9e766428b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputHoldTime: 0.2
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
