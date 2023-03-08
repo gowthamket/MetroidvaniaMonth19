@@ -6,9 +6,11 @@ public class PlayerTouchingWallState : PlayerState
 {
     protected bool isGrounded;
     protected bool isTouchingWall;
+    protected bool isTouchingLedge;
     protected int xInput;
     protected int yInput;
     protected bool grabInput;
+    protected bool jumpInput;
 
     public PlayerTouchingWallState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {
@@ -31,6 +33,12 @@ public class PlayerTouchingWallState : PlayerState
 
         isGrounded = player.CheckIfTouchingGround();
         isTouchingWall = player.CheckIfTouchingWall();
+        isTouchingLedge = player.CheckIfTouchingLedge();
+
+        if (isTouchingWall && !isTouchingLedge)
+        {
+            player.ledgeClimbState.SetDetected(player.transform.position);
+        }
     }
 
     public override void Enter()
@@ -50,7 +58,13 @@ public class PlayerTouchingWallState : PlayerState
         xInput = player.inputHandler.NormInputX;
         yInput = player.inputHandler.NormInputY;
         grabInput = player.inputHandler.grabInput;
+        jumpInput = player.inputHandler.jumpInput;
 
+        if (jumpInput)
+        {
+            //player.wallClimbState.Determine
+            stateMachine.ChangeState(player.wallClimbState);
+        }
         if (isGrounded)
         {
             stateMachine.ChangeState(player.idleState);
@@ -58,6 +72,10 @@ public class PlayerTouchingWallState : PlayerState
         else if (!isTouchingWall || (xInput != player.facingDirection && !grabInput))
         {
             stateMachine.ChangeState(player.inAirState);
+        }
+        else if (!isTouchingWall || !isTouchingLedge)
+        {
+            stateMachine.ChangeState(player.ledgeClimbState);
         }
     }
 
