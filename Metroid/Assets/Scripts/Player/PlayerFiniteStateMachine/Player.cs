@@ -16,7 +16,6 @@ public class Player : MonoBehaviour
     public PlayerWallSlideState wallSlideState { get; private set; }    
     public PlayerAttackState primaryAttackState { get; private set; }
     public PlayerAttackState secondaryAttackState { get; private set; } 
-    public PlayerInventory inventory { get; private set; }
 
     public Animator anim { get; private set; } 
     public PlayerInputHandler inputHandler { get; private set; }    
@@ -51,7 +50,6 @@ public class Player : MonoBehaviour
         wallSlideState = new PlayerWallSlideState(this, StateMachine, playerData, "wall state");
         primaryAttackState = new PlayerAttackState(this, StateMachine, playerData, "primary attack");
         secondaryAttackState = new PlayerAttackState(this, StateMachine, playerData, "secondary attack");
-        inventory = GetComponent<PlayerInventory>();
     }
 
     private void Start()
