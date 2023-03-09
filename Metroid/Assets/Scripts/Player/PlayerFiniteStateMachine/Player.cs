@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     public PlayerAttackState primaryAttackState { get; private set; }
     public PlayerAttackState secondaryAttackState { get; private set; } 
     public PlayerLedgeClimbState ledgeClimbState { get; private set; }
+    public PlayerWeaponPickupState weaponPickupState { get; private set; }
 
     public Animator anim { get; private set; } 
     public PlayerInputHandler inputHandler { get; private set; }    
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Transform ledgeCheck;
 
+    public GameObject weaponMenu;
    
     private void Awake()
     {
@@ -54,12 +56,14 @@ public class Player : MonoBehaviour
         primaryAttackState = new PlayerAttackState(this, StateMachine, playerData, "primary attack");
         secondaryAttackState = new PlayerAttackState(this, StateMachine, playerData, "secondary attack");
         ledgeClimbState = new PlayerLedgeClimbState(this, StateMachine, playerData, "ledge climb");
+        weaponPickupState = new PlayerWeaponPickupState(this, StateMachine, playerData, "weapon pickup");
     }
 
     private void Start()
     {
         anim = GetComponent<Animator>();
         inputHandler = GetComponent<PlayerInputHandler>();
+        weaponMenu.SetActive(false);
         
 
         StateMachine.Initialize(idleState);
@@ -135,5 +139,17 @@ public class Player : MonoBehaviour
     {
         facingDirection *= -1;
         transform.Rotate(0f, 180.0f, 0f);
+    }
+
+    public void PickupWeapon()
+    {
+        weaponMenu.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void DoneWithWeaponMenu()
+    {
+        weaponMenu.SetActive(false);
+        Time.timeScale = 1f;
     }
 }

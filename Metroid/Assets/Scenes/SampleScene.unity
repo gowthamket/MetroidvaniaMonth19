@@ -1260,7 +1260,7 @@ GameObject:
   - component: {fileID: 1059121065}
   - component: {fileID: 1059121064}
   m_Layer: 5
-  m_Name: Panel (1)
+  m_Name: SecondaryWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1543,7 +1543,7 @@ GameObject:
   - component: {fileID: 1367367125}
   - component: {fileID: 1367367124}
   m_Layer: 5
-  m_Name: Panel (2)
+  m_Name: TransitionWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1758,7 +1758,7 @@ GameObject:
   - component: {fileID: 1644374857}
   - component: {fileID: 1644374856}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: PrimaryWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2202,12 +2202,12 @@ GameObject:
   - component: {fileID: 2096036331}
   - component: {fileID: 2096036330}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: WeaponMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2096036330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2541,3 +2541,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb27e08e83762a64ca7585335775cf1c, type: 3}
+--- !u!1 &7945110049001394037 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4127246401820495681, guid: cb27e08e83762a64ca7585335775cf1c, type: 3}
+  m_PrefabInstance: {fileID: 7945110049001394036}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7945110049001394038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7945110049001394037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a4a0a3f18a513f459dba428c895c4ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponMenu: {fileID: 2096036329}

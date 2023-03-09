@@ -4,15 +4,40 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public GameObject weaponMenu;
+    public static bool isPaused;
+
+    private void Start()
     {
-        
+        weaponMenu.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPaused)
+            {
+                ResumeGame();
+            }
+            else
+            {
+                PauseGame();    
+            }
+        }
+    }
+
+    public void PauseGame()
+    {
+        weaponMenu.SetActive(true);
+        Time.timeScale = 0f;
+        isPaused = true;
+    }
+
+    public void ResumeGame()
+    {
+        weaponMenu.SetActive(false);
+        Time.timeScale = 1f;
+        isPaused = false;
     }
 }

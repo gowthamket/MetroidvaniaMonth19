@@ -17,6 +17,10 @@ public class PlayerInputHandler : MonoBehaviour
     public bool jumpInputStop { get; private set; } 
     public bool grabInput { get; private set; }
 
+
+    public bool weaponPickupInput { get; private set; }
+    public int weaponPickupCount { get; private set; }
+
     public bool[] attackInputs { get; private set; }
 
     [SerializeField]
@@ -118,6 +122,22 @@ public class PlayerInputHandler : MonoBehaviour
     public void UseJumpInput()
     {
         jumpInput = false;
+    }
+
+    public void OnPickupInput(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            if (weaponPickupCount == 0)
+            {
+                weaponPickupInput = true;
+                weaponPickupCount = 1;  
+            }
+            else if (weaponPickupCount == 1)
+            {
+                weaponPickupInput = false;
+            }
+        }
     }
 
     private void CheckJumpInputHoldTime()

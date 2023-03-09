@@ -31,5 +31,6 @@ public class PlayerData : ScriptableObject
     public float wallCheckDistance = 0.5f;
     public LayerMask whatIsGround;
 
-    
+    [Header("Weapon Pickup State")]
+    public MenuManager menuManager;
 }
