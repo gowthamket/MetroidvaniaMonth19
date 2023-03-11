@@ -19,30 +19,23 @@ public class Player : MonoBehaviour
     public PlayerLedgeClimbState ledgeClimbState { get; private set; }
     public PlayerWeaponPickupState weaponPickupState { get; private set; }
 
+    public Core core { get; private set; }  
     public Animator anim { get; private set; } 
     public PlayerInputHandler inputHandler { get; private set; }    
-    public Rigidbody2D rb { get; private set; }
+    public Rigidbody2D rb { get; private set; }   
 
-    public Vector2 currentVelocity { get; private set; }   
-    
-    public int facingDirection { get; private set; }
+    public PlayerInventory inventory { get; private set; }  
     
     [SerializeField]
     private PlayerData playerData;
 
     private Vector2 workspace;
 
-    [SerializeField]
-    private Transform groundCheck;
-    [SerializeField]
-    private Transform wallCheck;
-    [SerializeField]
-    private Transform ledgeCheck;
-
     public GameObject weaponMenu;
    
     private void Awake()
     {
+        core = GetComponentInChildren<Core>();
         StateMachine = new PlayerStateMachine();
 
         idleState = new PlayerIdleState(this, StateMachine, playerData, "idle");
@@ -63,82 +56,25 @@ public class Player : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         inputHandler = GetComponent<PlayerInputHandler>();
+        inventory = GetComponent<PlayerInventory>();    
         weaponMenu.SetActive(false);
-        
+
+        primaryAttackState.SetWeapon(inventory.weapons[(int)CombatInputs.primary]);
+        secondaryAttackState.SetWeapon(inventory.weapons[(int)CombatInputs.secondary]);
 
         StateMachine.Initialize(idleState);
     }
 
     private void Update()
     {
-        currentVelocity = rb.velocity;
+        //currentVelocity = rb.velocity;
+        core.LogicUpdate();
         StateMachine.CurrentState.LogicUpdate();
     }
 
     private void FixedUpdate()
     {
         StateMachine.CurrentState.PhysicsUpdate();
-    }
-
-    public void SetVelocityZero()
-    {
-        rb.velocity = Vector2.zero;
-        currentVelocity = Vector2.zero;
-    }
-
-    public void SetVelocityX(float velocity)
-    {
-        workspace.Set(velocity, currentVelocity.y);
-        rb.velocity = workspace;
-        currentVelocity = workspace;
-    }
-
-    public void SetVelocityY(float velocity)
-    {
-        workspace.Set(currentVelocity.x, velocity);
-        rb.velocity = workspace;
-        currentVelocity = workspace;
-    }
-
-    public bool CheckIfTouchingGround()
-    {
-        return Physics2D.OverlapCircle(groundCheck.position, playerData.groundCheckRadius, playerData.whatIsGround);
-    }
-
-    public bool CheckIfTouchingWall()
-    {
-        return Physics2D.Raycast(wallCheck.position, Vector2.right * facingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
-    }
-
-    public bool CheckIfTouchingLedge()
-    {
-        return Physics2D.Raycast(wallCheck.position, Vector2.right * facingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
-    }
-
-    public void CheckIfShouldFlip(int xInput)
-    {
-        if (xInput != 0 && xInput != facingDirection)
-        {
-            Flip();
-        }
-    }
-
-    public Vector2 DetermineCornerPosition()
-    {
-        RaycastHit2D xHit = Physics2D.Raycast(wallCheck.position, Vector2.right * facingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
-        float xDist = xHit.distance;
-        workspace.Set(xDist * facingDirection, 0f);
-        RaycastHit2D yHit = Physics2D.Raycast(ledgeCheck.position + (Vector3)(workspace), Vector2.down, ledgeCheck.position.y - wallCheck.position.y, playerData.whatIsGround);
-        float yDist = yHit.distance;
-
-        workspace.Set(wallCheck.position.x + (xDist * facingDirection), ledgeCheck.position.y - yDist);
-        return workspace;
-    }
-
-    private void Flip()
-    {
-        facingDirection *= -1;
-        transform.Rotate(0f, 180.0f, 0f);
     }
 
     public void PickupWeapon()

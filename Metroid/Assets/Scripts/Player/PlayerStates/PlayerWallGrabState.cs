@@ -43,8 +43,8 @@ public class PlayerWallGrabState : PlayerTouchingWallState
 
         HoldPosition();
 
-        player.SetVelocityX(0f);
-        player.SetVelocityY(0f);
+        core.movement.SetVelocityX(0f);
+        core.movement.SetVelocityY(0f);
 
         if (yInput > 0f)
         {
@@ -60,8 +60,8 @@ public class PlayerWallGrabState : PlayerTouchingWallState
     {
         player.transform.position = holdPosition;
 
-        player.SetVelocityX(0f);
-        player.SetVelocityY(0f);
+        core.movement.SetVelocityX(0f);
+        core.movement.SetVelocityY(0f);
     }
 
     public override void PhysicsUpdate()

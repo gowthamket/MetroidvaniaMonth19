@@ -25,9 +25,9 @@ public class PlayerInAirState : PlayerState
     {
         base.DoChecks();
 
-        isGrounded = player.CheckIfTouchingGround();
-        isTouchingWall = player.CheckIfTouchingWall();
-        isTouchingLedge = player.CheckIfTouchingLedge();
+        isGrounded = core.collisionSenses.Ground;
+        isTouchingWall = core.collisionSenses.Wall;
+        isTouchingLedge = core.collisionSenses.Ledge;
 
         if (isTouchingWall && !isTouchingLedge)
         {
@@ -65,7 +65,7 @@ public class PlayerInAirState : PlayerState
             stateMachine.ChangeState(player.secondaryAttackState);
         }
 
-        if (isGrounded && player.currentVelocity.y < 0.01f)
+        if (isGrounded && core.movement.currentVelocity.y < 0.01f)
         {
             stateMachine.ChangeState(player.landState);
         }
@@ -81,17 +81,17 @@ public class PlayerInAirState : PlayerState
         {
             stateMachine.ChangeState(player.jumpState);
         }
-        else if (isTouchingWall && xInput == player.facingDirection)
+        else if (isTouchingWall && xInput == core.movement.facingDirection)
         {
             stateMachine.ChangeState(player.wallSlideState);
         }
         else
         {
-            player.CheckIfShouldFlip(xInput);
-            player.SetVelocityX(playerData.movementVelocity);
+            core.movement.CheckIfShouldFlip(xInput);
+            core.movement.SetVelocityX(playerData.movementVelocity);
 
-            player.anim.SetFloat("yvelocity", player.currentVelocity.y);
-            player.anim.SetFloat("xvelocity", Mathf.Abs(player.currentVelocity.x));
+            player.anim.SetFloat("yvelocity", core.movement.currentVelocity.y);
+            player.anim.SetFloat("xvelocity", Mathf.Abs(core.movement.currentVelocity.x));
         }
     }
 
@@ -101,10 +101,10 @@ public class PlayerInAirState : PlayerState
         {
             if (jumpInputStop)
             {
-                player.SetVelocityY(player.currentVelocity.y * playerData.variableJumpHeightMultiplier);
+                core.movement.SetVelocityY(core.movement.currentVelocity.y * playerData.variableJumpHeightMultiplier);
                 isJumping = false;
             }
-            else if (player.currentVelocity.y <= 0f)
+            else if (core.movement.currentVelocity.y <= 0f)
             {
                 isJumping = false;
             }

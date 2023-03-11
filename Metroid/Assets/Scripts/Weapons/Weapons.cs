@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Weapons : MonoBehaviour
 {
-    [SerializeField] private SO_WeaponData weaponData;
+    [SerializeField] public SO_WeaponData weaponData;
 
     protected Animator baseAnimator;
     protected Animator weaponAnimator;
@@ -13,7 +13,7 @@ public class Weapons : MonoBehaviour
 
     protected int attackCounter;
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         baseAnimator = GetComponent<Animator>();    
         weaponAnimator = GetComponent<Animator>();
@@ -71,6 +71,11 @@ public class Weapons : MonoBehaviour
     public virtual void AnimationTurnOnFlipTrigger()
     {
         state.SetFlipCheck(true);
+    }
+
+    public virtual void AnimationActionTrigger()
+    {
+
     }
 
     public void InitializeWeapon(PlayerAttackState state)
