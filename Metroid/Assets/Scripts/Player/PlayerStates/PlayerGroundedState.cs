@@ -11,6 +11,12 @@ public class PlayerGroundedState : PlayerState
     private bool isGrounded;
     private bool isTouchingWall;
 
+    protected Movement Movement { get => movement ??= core.GetCoreComponent(ref movement); }
+    private Movement movement;
+
+    protected CollisionSenses CollisionSenses { get => collisionSenses ??= core.GetCoreComponent(ref collisionSenses); }
+    private CollisionSenses collisionSenses;
+
     public PlayerGroundedState(Player player, PlayerStateMachine stateMachine, PlayerData playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
     {
 
@@ -20,8 +26,12 @@ public class PlayerGroundedState : PlayerState
     {
         base.DoChecks();
 
-        isGrounded = core.collisionSenses.Ground;
-        isTouchingWall = core.collisionSenses.Wall;    
+        if (CollisionSenses)
+        {
+            isGrounded = CollisionSenses.Ground;
+            isTouchingWall = CollisionSenses.Wall;
+        }
+           
     }
 
     public override void Enter()

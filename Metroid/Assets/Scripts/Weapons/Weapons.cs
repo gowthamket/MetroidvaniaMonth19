@@ -11,6 +11,8 @@ public class Weapons : MonoBehaviour
 
     protected PlayerAttackState state;
 
+    protected Core core;
+
     protected int attackCounter;
 
     protected virtual void Awake()
@@ -78,8 +80,9 @@ public class Weapons : MonoBehaviour
 
     }
 
-    public void InitializeWeapon(PlayerAttackState state)
+    public void InitializeWeapon(PlayerAttackState state, Core core)
     {
         this.state = state;
+        this.core = core;
     }
 }

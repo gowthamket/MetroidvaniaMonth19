@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoreComponent : MonoBehaviour
+public class CoreComponent : MonoBehaviour, ILogicUpdate
 {
     protected Core core;
+    private float currentHealth;
 
     protected virtual void Awake()
     {
@@ -12,7 +13,12 @@ public class CoreComponent : MonoBehaviour
 
         if (core == null)
         {
-
+            core.AddComponent(this);
         }
+    }
+
+    public virtual void LogicUpdate()
+    {
+
     }
 }

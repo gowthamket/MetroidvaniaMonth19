@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class ChargeState : State
 {
+    protected Movement Movement { get => movement ?? core.GetCoreComponent(ref movement); }
+    private CollisionSenses CollisionSenses { get => collisionSenses ?? core.GetCoreComponent(ref collisionSenses); }
+
+    private Movement movement;
+    private CollisionSenses collisionSenses;
+
     protected D_ChargeState stateData;
 
     protected bool isPlayerInMinAggroRange;
@@ -22,8 +28,8 @@ public class ChargeState : State
         base.DoChecks();
 
         isPlayerInMinAggroRange = entity.CheckPlayerInMinAggroRange();
-        isDetectingLedge = entity.CheckLedge();
-        isDetectingWall = entity.CheckWall();
+        isDetectingLedge = CollisionSenses.LedgeVerticalCheck;
+        isDetectingWall = CollisionSenses.Wall;
 
         performCloseRangeAction = entity.CheckPlayerInCloseRangeAction();
     }
@@ -32,7 +38,7 @@ public class ChargeState : State
     {
         base.Enter();
         isChargeTimeOver = false;
-        entity.SetVelocity(stateData.chargeSpeed);
+        Movement.SetVelocityX(stateData.chargeSpeed * Movement.facingDirection);
     }
 
     public virtual void Exit()
@@ -48,6 +54,7 @@ public class ChargeState : State
         {
             isChargeTimeOver = true;
         }
+        Movement.SetVelocityX(stateData.chargeSpeed * Movement.facingDirection);
     }
 
     public virtual void PhysicsUpdate()
@@ -55,7 +62,7 @@ public class ChargeState : State
         base.PhysicsUpdate();
 
         isPlayerInMinAggroRange = entity.CheckPlayerInMinAggroRange();
-        isDetectingLedge = entity.CheckLedge();
-        isDetectingWall = entity.CheckWall();
+        isDetectingLedge = CollisionSenses.LedgeVerticalCheck;
+        isDetectingWall = CollisionSenses.Wall;
     }
 }

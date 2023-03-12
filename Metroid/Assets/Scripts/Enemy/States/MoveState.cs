@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class MoveState : State
 {
+    protected Movement Movement { get => movement ?? core.GetCoreComponent(ref movement); }
+    private CollisionSenses CollisionSenses { get => collisionSenses ?? core.GetCoreComponent(ref collisionSenses); }
+
+    private Movement movement;
+    private CollisionSenses collisionSenses;
+
     protected D_MoveState stateData;
 
     protected bool isDetectingWall;
@@ -18,7 +24,7 @@ public class MoveState : State
     public virtual void Enter()
     {
         base.Enter();
-        entity.SetVelocity(stateData.movementSpeed);
+        
     }
 
     public virtual void Exit()
@@ -28,15 +34,17 @@ public class MoveState : State
 
     public virtual void LogicUpdate()
     {
-        base.LogicUpdate(); 
+        base.LogicUpdate();
+
+        Movement?.SetVelocityX(stateData.movementSpeed * Movement.facingDirection);
     }
 
     public virtual void PhysicsUpdate()
     {
         base.PhysicsUpdate();
 
-        isDetectingLedge = entity.CheckLedge();
-        isDetectingWall = entity.CheckWall();
+        isDetectingLedge = CollisionSenses.LedgeVerticalCheck;
+        isDetectingWall = CollisionSenses.Wall;
         isPlayerInMinAggroRange = entity.CheckPlayerInMinAggroRange();
     }
 
@@ -44,8 +52,8 @@ public class MoveState : State
     {
         base.DoChecks();
 
-        isDetectingLedge = entity.CheckLedge();
-        isDetectingWall = entity.CheckWall();
+        isDetectingLedge = CollisionSenses.LedgeVerticalCheck;
+        isDetectingWall = CollisionSenses.Wall;
         isPlayerInMinAggroRange = entity.CheckPlayerInMinAggroRange();
     }
 }

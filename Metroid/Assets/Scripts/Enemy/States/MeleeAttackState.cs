@@ -6,8 +6,6 @@ public class MeleeAttackState : AttackState
 {
     protected D_MeleeAttack stateData;
 
-    protected AttackDetails attackDetails;
-
     public MeleeAttackState(Entity entity, FiniteStateMachine stateMachine, string animBoolName, Transform attackPosition, D_MeleeAttack stateData) : base(entity, stateMachine, animBoolName, attackPosition)
     {
         this.stateData = stateData;
@@ -22,8 +20,7 @@ public class MeleeAttackState : AttackState
     {
         base.Enter();
 
-        attackDetails.damageAmount = stateData.attackDamage;
-        attackDetails.position = entity.aliveGO.transform.position;
+        
     }
 
     public override void Exit()
@@ -54,7 +51,17 @@ public class MeleeAttackState : AttackState
 
         foreach (Collider2D collider in detectedObjects)
         {
-            collider.transform.SendMessage("Damage", attackDetails);
+            IDamageable damageable = collider.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.Damage(stateData.attackDamage);
+            }
+
+            IKnockbackable knockbackable = collider.GetComponent<IKnockbackable>();
+            if (knockbackable != null)
+            {
+                knockbackable.Knockback(stateData.knockbackAngle, stateData.knockbackStrength, Movement.facingDirection);
+            }
         }
     }
 }

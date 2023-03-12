@@ -40,22 +40,22 @@ public class PlayerAttackState : PlayerAbilityState
 
         xInput = player.inputHandler.NormInputX;
 
-        core.movement.CheckIfShouldFlip(xInput);
+        Movement?.CheckIfShouldFlip(xInput);
         if (shouldCheckFlip)
         {
-            core.movement.CheckIfShouldFlip(xInput);
+            Movement?.CheckIfShouldFlip(xInput);
         }
 
         if (setVelocity)
         {
-            core.movement.SetVelocityX(velocityToSet * core.movement.facingDirection);
+            Movement?.SetVelocityX(velocityToSet * Movement.facingDirection);
         }
     }
 
     public void SetWeapon(Weapons weapon)
     {
         this.weapon = weapon;
-        this.weapon.InitializeWeapon(this);
+        this.weapon.InitializeWeapon(this, core);
     }
 
     public override void AnimationFinishTrigger()
@@ -66,7 +66,7 @@ public class PlayerAttackState : PlayerAbilityState
 
     public void SetPlayerVelocity(float velocity)
     {
-        core.movement.SetVelocityX(velocity * core.movement.facingDirection);
+        Movement?.SetVelocityX(velocity * Movement.facingDirection);
 
         velocityToSet = velocity;   
         setVelocity = true; 

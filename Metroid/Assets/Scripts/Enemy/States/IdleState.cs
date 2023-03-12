@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class IdleState : State
 {
+    protected Movement Movement { get => movement ?? core.GetCoreComponent(ref movement); }
+    private CollisionSenses CollisionSenses { get => collisionSenses ?? core.GetCoreComponent(ref collisionSenses); }
+
+    private Movement movement;
+    private CollisionSenses collisionSenses;
+
     protected D_IdleState stateData;
 
     protected bool flipAfterIdle;
@@ -21,7 +27,7 @@ public class IdleState : State
     {
         base.Enter();
 
-        entity.SetVelocity(0);
+        Movement.SetVelocityX(0);
         isIdleTimeOver = false;
         isPlayerInMinAggroRange = entity.CheckPlayerInMinAggroRange();
         SetRandomIdleTime();
@@ -33,14 +39,14 @@ public class IdleState : State
 
         if (flipAfterIdle)
         {
-            entity.Flip();  
+            Movement.Flip();  
         }
     }
 
     public virtual void LogicUpdate()
     {
         base.LogicUpdate();
-
+        Movement.SetVelocityX(0);
         if (Time.time >= startTime + idleTime)
         {
             isIdleTimeOver = true;  

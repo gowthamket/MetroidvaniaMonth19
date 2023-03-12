@@ -5,7 +5,14 @@ using UnityEngine;
 public class AggressiveWeapon : Weapons
 {
     protected SO_AggressiveWeaponData aggressiveWeaponData;
-    private List<IDamageable> detectedDamageable = new List<IDamageable> ();
+    private List<IDamageable> detectedDamageables = new List<IDamageable> ();
+    private List<IKnockbackable> detectedKnockbackables = new List<IKnockbackable> ();
+
+    protected Movement Movement { get => movement ?? core.GetCoreComponent(ref movement); }
+    private CollisionSenses CollisionSenses { get => collisionSenses ?? core.GetCoreComponent(ref collisionSenses); }
+
+    private Movement movement;
+    private CollisionSenses collisionSenses;
 
     protected override void Awake()
     {
@@ -31,9 +38,14 @@ public class AggressiveWeapon : Weapons
     private void CheckMeleeAttack()
     {
         WeaponAttackDetails details = aggressiveWeaponData.AttackDetails[attackCounter];
-        foreach (IDamageable item in detectedDamageable)
+        foreach (IDamageable item in detectedDamageables)
         {
-            item.Damage(10f);
+            item.Damage(details.damageAmount);
+        }
+
+        foreach (IKnockbackable item in detectedKnockbackables)
+        {
+            item.Knockback(details.knockbackAngle, details.knockbackStrength, Movement.facingDirection);
         }
     }
 
@@ -43,7 +55,14 @@ public class AggressiveWeapon : Weapons
 
         if (damageable != null)
         {
-            detectedDamageable.Add (damageable);
+            detectedDamageables.Add (damageable);
+        }
+
+        IKnockbackable knockbackable = collision.GetComponent<IKnockbackable>();
+
+        if (knockbackable != null)
+        {
+            detectedKnockbackables.Add(knockbackable);
         }
     }
 
@@ -53,7 +72,14 @@ public class AggressiveWeapon : Weapons
 
         if (damageable != null)
         {
-            detectedDamageable.Remove(damageable);
+            detectedDamageables.Remove(damageable);
+        }
+
+        IKnockbackable knockbackable = collision.GetComponent<IKnockbackable>();
+
+        if (knockbackable != null)
+        {
+            detectedKnockbackables.Remove(knockbackable);
         }
     }
 }
