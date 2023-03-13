@@ -22,9 +22,11 @@ public class Player : MonoBehaviour
     public Core core { get; private set; }  
     public Animator anim { get; private set; } 
     public PlayerInputHandler inputHandler { get; private set; }    
-    public Rigidbody2D rb { get; private set; }   
+    public Rigidbody2D rb { get; private set; }
 
-    public PlayerInventory inventory { get; private set; }  
+    private PlayerInventory inventory;
+
+    private PlayerInventory Inventory => inventory ? inventory : core.GetCoreComponent(ref inventory);
     
     [SerializeField]
     private PlayerData playerData;

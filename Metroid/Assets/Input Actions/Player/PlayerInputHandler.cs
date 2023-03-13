@@ -11,6 +11,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     public Vector2 rawMovementInput { get; private set; }
 
+    public event Action<bool> OnInteract;
+
     public int NormInputX { get; private set; } 
     public int NormInputY { get; private set; }
     public bool jumpInput { get; private set; }
@@ -65,6 +67,19 @@ public class PlayerInputHandler : MonoBehaviour
         if (context.canceled)
         {
             attackInputs[(int)(CombatInputs.secondary)] = false;
+        }
+    }
+
+    public void OnInteractInput(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            OnInteract?.Invoke(true);
+        }
+
+        if (context.canceled)
+        {
+            OnInteract?.Invoke(false);
         }
     }
 
